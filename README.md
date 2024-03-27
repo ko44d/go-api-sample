@@ -1,1 +1,1 @@
-# go-webapp-sample
+# go-api-sample
