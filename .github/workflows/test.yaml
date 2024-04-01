@@ -12,4 +12,4 @@ jobs:
           go-version: '>=1.22'
       - run: go test ./... -coverprofile=coverage.out
       - name: report coverage
-        uses: k1Low/octcov-action@v0
+        uses: k1LoW/octcov-action@v0
