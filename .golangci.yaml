@@ -9,7 +9,7 @@ linters-settings:
 linters:
   disable-all: true
 
-enable:
+enable: ## https://golangci-lint.run/usage/linters/
   - goimports
   - deadcode
   - errcheck
