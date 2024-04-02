@@ -6,7 +6,8 @@ import (
 )
 
 var (
-	Task        = &TaskStore{Tasks: map[entity.TaskID]*entity.Task{}}
+	Tasks = &TaskStore{Tasks: map[entity.TaskID]*entity.Task{}}
+
 	ErrNotFound = errors.New("not found")
 )
 
