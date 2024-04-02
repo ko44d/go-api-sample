@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:8
+        image: mysql:8.3.0
         options: >-
           --health-cmd "mysqladmin ping -h localhost"
           --health-interval 20s
@@ -27,8 +27,9 @@ jobs:
           go-version: '>=1.22'
       - uses: actions/checkout@v3
       - run: |
-          go test ./... -coverprofile=coverage.out
+          go install github.com/k0kubun/sqldef/cmd/mysqldef@latest
           mysqldef -u todo -p todo -h 127.0.0.1 -P 3306 todo < ./_ddl/task.sql
           mysqldef -u todo -p todo -h 127.0.0.1 -P 3306 todo < ./_ddl/user.sql
+      - run: go test ./... -coverprofile=coverage.out
       - name: report coverage
         uses: k1LoW/octocov-action@v0
