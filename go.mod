@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/google/go-cmp v0.6.0
 )
