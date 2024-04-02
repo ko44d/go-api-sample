@@ -8,4 +8,4 @@ CREATE TABLE `user`
     `modified` DATETIME(6) NOT NULL COMMENT 'レコード修正日時',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uix_name` (`name`) USING BTREE
-) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=`ユーザー`;
+) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ユーザー';
