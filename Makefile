@@ -25,11 +25,11 @@ ps: ## Check container status
 test: ## Execute tests
 	go test -race -shuffle=on ./...
 
-dry-migrate: Dry run migrate
+dry-migrate: ## Dry run migrate
 	mysqldef -u todo -p todo -h 127.0.0.1 -P 33306 todo --dry-run < ./_ddl/task.sql
 	mysqldef -u todo -p todo -h 127.0.0.1 -P 33306 todo --dry-run < ./_ddl/user.sql
 
-migrate: Run migrate
+migrate: ## Run migrate
 	mysqldef -u todo -p todo -h 127.0.0.1 -P 33306 todo < ./_ddl/task.sql
 	mysqldef -u todo -p todo -h 127.0.0.1 -P 33306 todo < ./_ddl/user.sql
 
