@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/ko44d/go-api-sample/clock"
 	"github.com/ko44d/go-api-sample/config"
@@ -11,7 +12,15 @@ import (
 )
 
 func New(ctx context.Context, c *config.Config) (*sqlx.DB, func(), error) {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)%s?parseTime=true", c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName))
+
+	db, err := sql.Open("mysql",
+		fmt.Sprintf(
+			"%s:%s@tcp(%s:%d)/%s?parseTime=true",
+			c.DBUser, c.DBPassword,
+			c.DBHost, c.DBPort,
+			c.DBName,
+		),
+	)
 	if err != nil {
 		return nil, nil, err
 	}
