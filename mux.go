@@ -7,6 +7,7 @@ import (
 	"github.com/ko44d/go-api-sample/clock"
 	"github.com/ko44d/go-api-sample/config"
 	"github.com/ko44d/go-api-sample/handler"
+	"github.com/ko44d/go-api-sample/service"
 	"github.com/ko44d/go-api-sample/store"
 	"net/http"
 )
@@ -23,9 +24,14 @@ func NewMux(ctx context.Context, c *config.Config) (http.Handler, func(), error)
 		return nil, cleanup, err
 	}
 	r := store.Repository{Clocker: clock.RealClocker{}}
-	at := &handler.AddTask{DB: db, Repo: r, Validator: v}
+	at := &handler.AddTask{
+		Service:   &service.AddTask{DB: db, Repo: &r},
+		Validator: v,
+	}
 	mux.Post("/tasks", at.ServeHTTP)
-	lt := &handler.ListTask{DB: db, Repo: r}
+	lt := &handler.ListTask{
+		Service: &service.ListTask{DB: db, Repo: &r},
+	}
 	mux.Get("/tasks", lt.ServeHTTP)
 	return mux, cleanup, nil
 }

@@ -2,9 +2,10 @@ package handler
 
 import (
 	"bytes"
+	"context"
+	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/ko44d/go-api-sample/entity"
-	"github.com/ko44d/go-api-sample/store"
 	"github.com/ko44d/go-api-sample/testutil"
 	"net/http"
 	"net/http/httptest"
@@ -44,11 +45,15 @@ func TestAddTask(t *testing.T) {
 
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost, "/tasks", bytes.NewReader(testutil.LoadFile(t, tt.reqFile)))
-
+			moq := &AddTaskServiceMock{}
+			moq.AddTaskFunc = func(ctx context.Context, title string) (*entity.Task, error) {
+				if tt.want.status == http.StatusOK {
+					return &entity.Task{ID: 1}, nil
+				}
+				return nil, errors.New("error from mock")
+			}
 			sut := AddTask{
-				Store: &store.TaskStore{
-					Tasks: map[entity.TaskID]*entity.Task{},
-				},
+				Service:   moq,
 				Validator: validator.New(),
 			}
 			sut.ServeHTTP(w, r)
