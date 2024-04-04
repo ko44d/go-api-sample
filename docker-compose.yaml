@@ -13,6 +13,8 @@ services:
       DB_USER: todo
       DB_PASSWORD: todo
       DB_DATABASE: todo
+      REDIS_HOST: todo-redis
+      REDIS_PORT: 6379
     volumes:
       - .:/app
     ports:
@@ -31,5 +33,13 @@ services:
       - $PWD/_mysql/conf.d:/etc/mysql/conf.d:cached
     ports:
       - "33306:3306"
+  todo-redis:
+    image: "redis:latest"
+    container_name: todo-redis
+    ports:
+      - "36379:6379"
+    volumes:
+      - todo-redis-data:/data
 volumes:
   todo-db-data:
+  todo-redis-data:
