@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -59,10 +60,15 @@ type Repository struct {
 	Clocker clock.Clocker
 }
 
+const (
+	ErrCodeMySQLDuplicateEntry = 1062
+)
+
 var (
-	_ Beginner = (*sqlx.DB)(nil)
-	_ Preparer = (*sqlx.DB)(nil)
-	_ Queryer  = (*sqlx.DB)(nil)
-	_ Execer   = (*sqlx.DB)(nil)
-	_ Execer   = (*sqlx.Tx)(nil)
+	_               Beginner = (*sqlx.DB)(nil)
+	_               Preparer = (*sqlx.DB)(nil)
+	_               Queryer  = (*sqlx.DB)(nil)
+	_               Execer   = (*sqlx.DB)(nil)
+	_               Execer   = (*sqlx.Tx)(nil)
+	ErrAlreadyEntry          = errors.New("duplicate entry")
 )
