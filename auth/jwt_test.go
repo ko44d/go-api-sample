@@ -58,7 +58,6 @@ func TestJWTer_GetToken(t *testing.T) {
 	t.Parallel()
 
 	c := clock.FixedClocker{}
-
 	want, err := jwt.NewBuilder().
 		JwtID(uuid.New().String()).
 		Issuer(`github.com/ko44d/go-api-sample`).
@@ -93,10 +92,10 @@ func TestJWTer_GetToken(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodGet,
-		`https://github.com/ko44d`, nil)
-
-	req.Header.Set(`Authorization`, fmt.Sprintf("Bearer %s", signed))
-
+		`https://github.com/ko44d`,
+		nil,
+	)
+	req.Header.Set(`Authorization`, fmt.Sprintf(`Bearer %s`, signed))
 	got, err := sut.GetToken(ctx, req)
 	if err != nil {
 		t.Fatalf("want no error, but got %v", err)
