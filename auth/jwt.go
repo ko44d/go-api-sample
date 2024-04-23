@@ -87,7 +87,11 @@ func (j *JWTer) GenerateToken(ctx context.Context, u entity.User) ([]byte, error
 }
 
 func (j *JWTer) GetToken(ctx context.Context, r *http.Request) (jwt.Token, error) {
-	token, err := jwt.ParseRequest(r, jwt.WithKey(jwa.RS256, j.PublicKey), jwt.WithValidate(false))
+	token, err := jwt.ParseRequest(
+		r,
+		jwt.WithKey(jwa.RS256, j.PublicKey),
+		jwt.WithValidate(false),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -97,5 +101,5 @@ func (j *JWTer) GetToken(ctx context.Context, r *http.Request) (jwt.Token, error
 	if _, err := j.Store.Load(ctx, token.JwtID()); err != nil {
 		return nil, fmt.Errorf("GetToken: %q expired: %w", token.JwtID(), err)
 	}
-	return token, err
+	return token, nil
 }
