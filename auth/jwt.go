@@ -10,6 +10,7 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/lestrrat-go/jwx/v2/jwt"
+	"net/http"
 	"time"
 )
 
@@ -36,7 +37,7 @@ type Store interface {
 	Load(ctx context.Context, key string) (entity.UserID, error)
 }
 
-func NewJWTer(s Store) (*JWTer, error) {
+func NewJWTer(s Store, clocker clock.Clocker) (*JWTer, error) {
 	j := &JWTer{Store: s}
 	privkey, err := parse(rawPrivKey)
 	if err != nil {
@@ -83,4 +84,18 @@ func (j *JWTer) GenerateToken(ctx context.Context, u entity.User) ([]byte, error
 		return nil, err
 	}
 	return s, nil
+}
+
+func (j *JWTer) GetToken(ctx context.Context, r *http.Request) (jwt.Token, error) {
+	token, err := jwt.ParseRequest(r, jwt.WithKey(jwa.RS256, j.PublicKey), jwt.WithValidate(false))
+	if err != nil {
+		return nil, err
+	}
+	if err := jwt.Validate(token, jwt.WithClock(j.Clocker)); err != nil {
+		return nil, fmt.Errorf("GetToken: failed to validate token: %w", err)
+	}
+	if _, err := j.Store.Load(ctx, token.JwtID()); err != nil {
+		return nil, fmt.Errorf("GetToken: %q expired: %w", token.JwtID(), err)
+	}
+	return token, err
 }
