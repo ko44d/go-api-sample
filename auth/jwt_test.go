@@ -37,7 +37,7 @@ func TestJWTer_GenerateToken(t *testing.T) {
 	u := fixture.User(&entity.User{ID: wantid})
 	moq.SaveFunc = func(ctx context.Context, key string, userid entity.UserID) error {
 		if userid != wantid {
-			t.Errorf("want %s, but got %s", wantid, userid)
+			t.Errorf("want %d, but got %d", wantid, userid)
 		}
 		return nil
 	}
@@ -104,4 +104,10 @@ func TestJWTer_GetToken(t *testing.T) {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("GetToken() got = %v, want %v", got, want)
 	}
+}
+
+type FixedTomorrowClocker struct{}
+
+func (c *FixedTomorrowClocker) Now() time.Time {
+	return clock.FixedClocker{}.Now().Add(24 * time.Hour)
 }
