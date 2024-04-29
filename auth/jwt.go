@@ -37,7 +37,7 @@ type Store interface {
 	Load(ctx context.Context, key string) (entity.UserID, error)
 }
 
-func NewJWTer(s Store, clocker clock.Clocker) (*JWTer, error) {
+func NewJWTer(s Store, c clock.Clocker) (*JWTer, error) {
 	j := &JWTer{Store: s}
 	privkey, err := parse(rawPrivKey)
 	if err != nil {
@@ -50,7 +50,7 @@ func NewJWTer(s Store, clocker clock.Clocker) (*JWTer, error) {
 	}
 	j.PrivateKey = privkey
 	j.PublicKey = pubkey
-	j.Clocker = clock.RealClocker{}
+	j.Clocker = c
 	return j, nil
 }
 
@@ -63,7 +63,7 @@ func parse(rawkey []byte) (jwk.Key, error) {
 }
 
 func (j *JWTer) GenerateToken(ctx context.Context, u entity.User) ([]byte, error) {
-	t, err := jwt.NewBuilder().
+	token, err := jwt.NewBuilder().
 		JwtID(uuid.New().String()).
 		Issuer(`github.com/ko44d/go-api-sample`).
 		Subject("access_token").
@@ -73,17 +73,17 @@ func (j *JWTer) GenerateToken(ctx context.Context, u entity.User) ([]byte, error
 		Claim(UserNameKey, u.Name).
 		Build()
 	if err != nil {
-		return nil, fmt.Errorf("GetToken: failed to build token: %w", err)
+		return nil, fmt.Errorf("GenerateToken: failed to build token: %w", err)
 	}
-	if err := j.Store.Save(ctx, t.JwtID(), u.ID); err != nil {
+	if err := j.Store.Save(ctx, token.JwtID(), u.ID); err != nil {
 		return nil, err
 	}
 
-	s, err := jwt.Sign(t, jwt.WithKey(jwa.RS256, j.PrivateKey))
+	signed, err := jwt.Sign(token, jwt.WithKey(jwa.RS256, j.PrivateKey))
 	if err != nil {
 		return nil, err
 	}
-	return s, nil
+	return signed, nil
 }
 
 func (j *JWTer) GetToken(ctx context.Context, r *http.Request) (jwt.Token, error) {

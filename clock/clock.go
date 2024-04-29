@@ -1,21 +1,21 @@
 package clock
 
-import "time"
+import (
+	"time"
+)
 
 type Clocker interface {
 	Now() time.Time
 }
 
-type RealClocker struct {
-}
+type RealClocker struct{}
 
 func (r RealClocker) Now() time.Time {
 	return time.Now()
 }
 
-type FixedClocker struct {
-}
+type FixedClocker struct{}
 
-func (f FixedClocker) Now() time.Time {
+func (fc FixedClocker) Now() time.Time {
 	return time.Date(2022, 5, 10, 12, 34, 56, 0, time.UTC)
 }
