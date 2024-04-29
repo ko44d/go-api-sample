@@ -22,7 +22,7 @@ const (
 //go:embed cert/secret.pem
 var rawPrivKey []byte
 
-//go:embed cert/public,pem
+//go:embed cert/public.pem
 var rawPubKey []byte
 
 type JWTer struct {
